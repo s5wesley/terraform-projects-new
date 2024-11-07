@@ -1,9 +1,7 @@
-# Provider Configuration
 provider "aws" {
   region = var.aws_region
 }
 
-# Terraform Block
 terraform {
   required_version = ">= 1.0.0"
   required_providers {
@@ -14,8 +12,8 @@ terraform {
   }
 }
 
-# Define the VPC
-resource "aws_vpc" "example_vpc" {
+# VPC Configuration
+resource "aws_vpc" "s5wesley_vpc" {
   cidr_block = var.vpc_cidr
 
   tags = merge(
@@ -24,9 +22,34 @@ resource "aws_vpc" "example_vpc" {
   )
 }
 
-# Define the first subnet
-resource "aws_subnet" "example_subnet1" {
-  vpc_id            = aws_vpc.example_vpc.id
+# Internet Gateway Configuration
+resource "aws_internet_gateway" "s5wesley_igw" {
+  vpc_id = aws_vpc.s5wesley_vpc.id
+
+  tags = merge(
+    var.common_tags,
+    { Name = format("%s-%s-%s-igw", var.common_tags["id"], var.common_tags["environment"], var.common_tags["project"]) }
+  )
+}
+
+# Route Table Configuration
+resource "aws_route_table" "s5wesley_route_table" {
+  vpc_id = aws_vpc.s5wesley_vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.s5wesley_igw.id
+  }
+
+  tags = merge(
+    var.common_tags,
+    { Name = format("%s-%s-%s-route-table", var.common_tags["id"], var.common_tags["environment"], var.common_tags["project"]) }
+  )
+}
+
+# Subnet 1 Configuration
+resource "aws_subnet" "s5wesley_subnet1" {
+  vpc_id            = aws_vpc.s5wesley_vpc.id
   cidr_block        = var.subnet1_cidr
   availability_zone = var.availability_zone1
 
@@ -36,9 +59,9 @@ resource "aws_subnet" "example_subnet1" {
   )
 }
 
-# Define the second subnet
-resource "aws_subnet" "example_subnet2" {
-  vpc_id            = aws_vpc.example_vpc.id
+# Subnet 2 Configuration
+resource "aws_subnet" "s5wesley_subnet2" {
+  vpc_id            = aws_vpc.s5wesley_vpc.id
   cidr_block        = var.subnet2_cidr
   availability_zone = var.availability_zone2
 
@@ -48,41 +71,29 @@ resource "aws_subnet" "example_subnet2" {
   )
 }
 
-# Define the EC2 instance
-resource "aws_instance" "example" {
+# Route Table Association for Subnet 1
+resource "aws_route_table_association" "s5wesley_route_assoc1" {
+  subnet_id      = aws_subnet.s5wesley_subnet1.id
+  route_table_id = aws_route_table.s5wesley_route_table.id
+}
+
+# Route Table Association for Subnet 2
+resource "aws_route_table_association" "s5wesley_route_assoc2" {
+  subnet_id      = aws_subnet.s5wesley_subnet2.id
+  route_table_id = aws_route_table.s5wesley_route_table.id
+}
+
+# EC2 Instance Configuration
+resource "aws_instance" "s5wesley_instance" {
   ami                         = var.ami_id
   instance_type               = var.instance_type
-  subnet_id                   = aws_subnet.example_subnet1.id
+  subnet_id                   = aws_subnet.s5wesley_subnet1.id
   associate_public_ip_address = true
   key_name                    = var.key_name
-
-  # Use security group by ID
-  security_group_ids = [aws_security_group.example_sg.id]
+  security_group_ids          = [aws_security_group.s5wesley_sg.id]
 
   tags = merge(
     var.common_tags,
     { Name = format("%s-%s-%s-ec2-instance", var.common_tags["id"], var.common_tags["environment"], var.common_tags["project"]) }
   )
-}
-
-# Define a security group for the instance with a formatted name
-resource "aws_security_group" "example_sg" {
-  name   = format("%s-%s-%s-ec2-sg", var.common_tags["id"], var.common_tags["environment"], var.common_tags["project"])
-  vpc_id = aws_vpc.example_vpc.id
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"] # Allows SSH from anywhere, restrict for security
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  tags = var.common_tags
 }
