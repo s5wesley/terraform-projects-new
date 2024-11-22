@@ -14,6 +14,7 @@ find "./terraform/modules" -type f -name 'terraform.tfstate.backup' -exec rm -f 
 find "./terraform/resources" -type d -name '.terraform' -exec rm -rf {} \;
 find "./terraform/resources" -type f -name 'terraform.tfstate' -exec rm -f {} \;
 find "./terraform/resources" -type f -name 'terraform.tfstate.backup' -exec rm -f {} \;
+find "./terraform.lock.hcl/resources" -type d -name '.terraform.lock.hcl' -exec rm -rf {} \;
 
 find "./terraform/terraform-concepts" -type d -name '.terraform' -exec rm -rf {} \;
 find "./terraform/terraform-concepts" -type f -name 'terraform.tfstate' -exec rm -f {} \;
