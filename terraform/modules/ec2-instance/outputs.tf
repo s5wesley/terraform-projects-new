@@ -1,9 +1,11 @@
-output "instance_public_ip" {
-  description = "Public IP address of the EC2 instance"
-  value       = aws_instance.s5wesley_instance.public_ip
+output "vpc_id" {
+  value = data.aws_vpc.vpc.id
 }
 
-output "vpc_id" {
-  description = "VPC ID where the EC2 instance is deployed"
-  value       = aws_vpc.s5wesley_vpc.id
+output "subnet_01" {
+  value = data.aws_subnet.default-subnet01.id
+}
+
+output "jenkins_master_ami" {
+  value = data.aws_ami.jenkins_master_ami.id
 }

@@ -28,24 +28,5 @@ locals {
 }
 
 module "ec2_instance" {
-  source             = "../../../modules/ec2-instance"
-  key_name           = var.key_name
-  ami_id             = var.ami_id
-  aws_region         = local.aws_region
-  vpc_cidr           = var.vpc_cidr
-  subnet1_cidr       = var.subnet1_cidr
-  subnet2_cidr       = var.subnet2_cidr
-  availability_zone1 = var.availability_zone1
-  availability_zone2 = var.availability_zone2
-  instance_type      = var.instance_type
-  common_tags        = local.common_tags
-}
+  source      = "../../../modules/ec2-instance"
 
-# Output to retrieve instance details
-output "instance_public_ip" {
-  value = module.ec2_instance.instance_public_ip
-}
-
-output "vpc_id" {
-  value = module.ec2_instance.vpc_id
-}
