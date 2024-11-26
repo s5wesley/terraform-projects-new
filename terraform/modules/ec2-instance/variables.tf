@@ -1,27 +1,57 @@
+# Define string variables
 variable "aws_region" {
-    type = string
-    default = "us-east-1"
+  type = string
 }
 
-variable "key_name" {
-    type = string
-    default = "ansible3"
+variable "ec2_instance_ami" {
+  type = string
 }
 
-variable "instance_type" {
-    type = string
-    default = "t2.medium"
+variable "ec2_instance_type" {
+  type = string
 }
 
-variable "common_tags" {
-  description = "Common tags for all resources."
-  type        = map(string)
-  default = {
-    id             = "1678"
-    owner          = "s5wesley"
-    environment    = "dev"
-    project        = "devops"
-    create_by      = "Terraform"
-    cloud_provider = "aws"
-  }
+variable "vpc_id" {
+  type = string
+}
+
+variable "subnet_id" {
+  type = string
+}
+
+variable "root_volume_size" {
+  type = number
+}
+
+variable "instance_count" {
+  type = number
+}
+
+variable "instance_name" {
+  type = string
+
+}
+
+variable "sg_name" {
+  type = string
+
+}
+
+variable "ec2_instance_key_name" {
+  type = string
+
+}
+
+variable "enable_termination_protection" {
+  type = bool
+
+}
+
+variable "allowed_ports" {
+  description = "List of allowed ports"
+  type        = list(number)
+}
+
+variable "tags" {
+  type = map(any)
 }
