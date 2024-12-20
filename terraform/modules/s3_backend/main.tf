@@ -1,11 +1,11 @@
 resource "aws_s3_bucket" "state" {
   provider      = aws.source
   force_destroy = var.force_destroy
-  bucket        = format("%s-%s-%s-tf-state", var.common_tags["environment"], var.common_tags["project"], var.common_tags["owner"])
+  bucket        = format("%s-%s-tf-state", var.common_tags["environment"], var.common_tags["owner"])
 
   tags = merge(
     var.common_tags,
-    { Name = format("%s-%s-%s-tf-state", var.common_tags["environment"], var.common_tags["project"], var.common_tags["owner"]) }
+    { Name = format("%s-%s-tf-state", var.common_tags["environment"], var.common_tags["owner"]) }
   )
 }
 
@@ -21,11 +21,11 @@ resource "aws_s3_bucket_versioning" "state" {
 resource "aws_s3_bucket" "backup" {
   provider      = aws.backup
   force_destroy = var.force_destroy
-  bucket        = format("%s-%s-%s-tf-state-backup", var.common_tags["environment"], var.common_tags["project"], var.common_tags["owner"])
+  bucket        = format("%s-%s-tf-state-backup", var.common_tags["environment"], var.common_tags["owner"])
 
   tags = merge(
     var.common_tags,
-    { Name = format("%s-%s-%s-tf-state-backup", var.common_tags["environment"], var.common_tags["project"], var.common_tags["owner"]) }
+    { Name = format("%s-%s-tf-state-backup", var.common_tags["environment"], var.common_tags["owner"]) }
   )
 }
 

@@ -1,5 +1,5 @@
 resource "aws_iam_role" "replication" {
-  name = format("%s-%s-%s-s3-replication-role", var.common_tags["environment"], var.common_tags["project"], var.common_tags["owner"])
+  name = format("%s-%s-s3-replication-role", var.common_tags["environment"], var.common_tags["owner"])
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17",
@@ -14,12 +14,12 @@ resource "aws_iam_role" "replication" {
   })
 
   tags = merge(var.common_tags, {
-    Name = format("%s-%s-%s-s3-replication-role", var.common_tags["environment"], var.common_tags["project"], var.common_tags["owner"])
+    Name = format("%s-%s-s3-replication-role", var.common_tags["environment"], var.common_tags["owner"])
   })
 }
 
 resource "aws_iam_policy" "replication" {
-  name = format("%s-%s-%s-s3-replication-policy", var.common_tags["environment"], var.common_tags["project"], var.common_tags["owner"])
+  name = format("%s-%s-s3-replication-policy", var.common_tags["environment"], var.common_tags["owner"])
 
   policy = jsonencode({
     Version = "2012-10-17",
@@ -43,12 +43,12 @@ resource "aws_iam_policy" "replication" {
   })
 
   tags = merge(var.common_tags, {
-    Name = format("%s-%s-%s-s3-replication-policy", var.common_tags["environment"], var.common_tags["project"], var.common_tags["owner"])
+    Name = format("%s-%s-s3-replication-policy", var.common_tags["environment"], var.common_tags["owner"])
   })
 }
 
 resource "aws_iam_policy_attachment" "replication" {
-  name       = format("%s-%s-%s-s3-replication-policy-attachment", var.common_tags["environment"], var.common_tags["project"], var.common_tags["owner"])
+  name       = format("%s-%s-s3-replication-policy-attachment", var.common_tags["environment"], var.common_tags["owner"])
   roles      = [aws_iam_role.replication.name]
   policy_arn = aws_iam_policy.replication.arn
 }

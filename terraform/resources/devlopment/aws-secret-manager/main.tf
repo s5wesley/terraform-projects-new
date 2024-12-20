@@ -1,3 +1,8 @@
+provider "aws" {
+  region = "us-east-1"
+}
+
+## Terraform block
 terraform {
   required_version = ">= 1.0.0"
   required_providers {
@@ -6,10 +11,25 @@ terraform {
       version = "~> 4.0"
     }
   }
+
+  # backend "s3" {
+  #   bucket         = "development-s5wesley-tf-state"
+  #   key            = "aws-secret-manager/terraform.tfstate"
+  #   region         = "us-east-1"
+  #   dynamodb_table = "development-s5wesley-tf-state-lock"
+  #   encrypt        = true
+  # }
+
 }
 
-locals {
-  common_tags = {
+module "aws-secret-manager" {
+  source     = "../../../modules/aws-secret-manager"
+  aws_region = "us-east-1"
+  secret_names = [
+    "DB_USERNAME",
+    "DB_PASSWORD"
+  ]
+  tags = {
     id             = "1678"
     owner          = "s5wesley"
     environment    = "development"
@@ -18,13 +38,4 @@ locals {
     cloud_provider = "aws"
     company        = "wesley"
   }
-}
-
-module "my_secret" {
-  source             = "../../../modules/aws-secret-manager" # Path to the module
-  secret_name        = "my_database_secret"
-  secret_description = "This is a description of my secret"
-  name               = "DB_USERNAME"     # Replace with your actual name
-  password           = "DB_PASSWORD"     # Replace with your actual password
-  tags               = local.common_tags # Passing tags to the module
 }
